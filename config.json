@@ -1,0 +1,4 @@
+{
+    "dbConfig":{
+        "connectionString":"mongodb+srv://Rawda:rawda2468055@todocluster.a63nx.mongodb.net/TodoDB?retryWrites=true&w=majority"    }
+}
