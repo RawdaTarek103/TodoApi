@@ -10,7 +10,7 @@ const register = async (req, res, next) => {
         user.password = await bcrypt.hash(user.password, 12);
         const { _id, name, email } = await user.save()
         // create access token 
-        const accessToken = await jwt.sign({ user: { _id: _id } }, "hi", { expiresIn: "2m" })
+        const accessToken = await jwt.sign({ user: { _id: _id } }, ACCESS_TOKEN_SECRET, { expiresIn: "2m" })
         // send res 
         res.statusCode = 201
         res.send({ access_token: accessToken, user: { _id, name, email } })
