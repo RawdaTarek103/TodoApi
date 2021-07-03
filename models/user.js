@@ -15,11 +15,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        index: {
-            unique: true,
-            collation: { locale: 'en', strength: 2 },
-            message: "hi error"
-        },
         maxLength: 150,
         validate: {
             validator: v =>
@@ -36,6 +31,6 @@ const userSchema = new mongoose.Schema({
 })
 
 // attach our schema to the collection in DB  
-const userModel = mongoose.model("users",userSchema)
+const userModel = mongoose.model("users", userSchema)
 
 module.exports = userModel
