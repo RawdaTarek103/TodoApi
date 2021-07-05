@@ -10,14 +10,14 @@ const createTask = async (req, res, next) => {
     const task = new taskModel(req.body);
     try {
         const todo = todoModel.findOne({ _id: req.params.id })
-        if(JSON.stringify(todo) === "{}"){
+        if (JSON.stringify(todo) === "{}") {
             res.statusCode = 404
-            res.send({"msg":"creation failed, todo list was not found"})
+            res.send({ "msg": "creation failed, todo list was not found" })
         }
         task.todoId = req.params.todoId;
         const doc = await task.save()
         res.statusCode = 201
-        res.send(doc)
+        res.send({ access_token: req.accessToken, task: doc })
     } catch (e) {
         res.statusCode = 400
         res.send(e)
@@ -28,7 +28,7 @@ const readAllTasks = async (req, res, next) => {
     try {
         const tasks = await todoModel.find({ todoId: req.params.todoId }).exec()
         res.statusCode = 200
-        res.send(tasks)
+        res.send({ access_token: req.accessToken, tasks: tasks })
     } catch (e) {
         res.statusCode = 400
         res.send(e)
@@ -44,7 +44,7 @@ const deleteTask = async (req, res, next) => {
             res.send({ msg: "task was not found" })
         } else {
             res.statusCode = 200
-            res.send({ msg: "task was deleted successfully" })
+            res.send({ access_token: req.accessToken, msg: "task was deleted successfully" })
         }
     } catch (e) {
         res.statusCode = 400
@@ -64,7 +64,7 @@ const updateTask = async (req, res, next) => {
             task.done = req.body.done
             const newTask = await task.save()
             res.statusCode = 200
-            res.send(newTask)
+            res.send({ access_token: req.accessToken, new_task: newTask })
         }
 
     } catch (e) {

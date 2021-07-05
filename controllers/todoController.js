@@ -13,7 +13,7 @@ const createTodo = async (req, res, next) => {
         todo.userId = req.userId;
         const doc = await todo.save()
         res.statusCode = 201
-        res.send(doc)
+        res.send({ access_token: req.accessToken, todo: doc })
     } catch (e) {
         res.statusCode = 400
         res.send(e)
@@ -23,9 +23,9 @@ const createTodo = async (req, res, next) => {
 const readTodoByTitle = async (req, res, next) => {
     const title = req.params.title
     try {
-        const todos = await todoModel.find({ userId: req.userId, title: title }).exec()
+        const todos = await todoModel.find({ userId: req.userId, title: { $regex: '.*' + title + '.*' } }, { userId: 0 }).exec()
         res.statusCode = 200
-        res.send(todos)
+        res.send({ access_token: req.accessToken, user_id: req.userId, todo_lists: todos })
     } catch (e) {
         res.statusCode = 400
         res.send(e)
@@ -34,9 +34,9 @@ const readTodoByTitle = async (req, res, next) => {
 
 const readAllTodos = async (req, res, next) => {
     try {
-        const todos = await todoModel.find({ userId: req.userId }).exec()
+        const todos = await todoModel.find({ userId: req.userId }, { userId: 0 }).exec()
         res.statusCode = 200
-        res.send(todos)
+        res.send({ access_token: req.accessToken, user_id: req.userId, todo_lists: todos })
     } catch (e) {
         res.statusCode = 400
         res.send(e)
@@ -52,7 +52,7 @@ const deleteTodo = async (req, res, next) => {
             res.send({ msg: "todo list was not found" })
         } else {
             res.statusCode = 200
-            res.send({ msg: "todo list was deleted successfully" })
+            res.send({ access_token: req.accessToken, msg: "todo list was deleted successfully" })
         }
     } catch (e) {
         res.statusCode = 400
@@ -70,9 +70,9 @@ const updateTodo = async (req, res, next) => {
         }
         else {
             todo.done = req.body.done
-            const newTodo = await todo.save()
+            const {userId, ...newTodo} = await todo.save()
             res.statusCode = 200
-            res.send(newTodo)
+            res.send({ access_token: req.accessToken, new_todo: newTodo })
         }
 
     } catch (e) {
